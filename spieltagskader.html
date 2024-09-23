@@ -25,8 +25,8 @@
             padding: 5px;
         }
         button {
-            display: block;
-            margin: 10px 0;
+            margin: 5px;
+            padding: 5px 10px;
         }
         #gespeicherterKader {
             margin-top: 20px;
@@ -34,6 +34,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
         th, td {
             border: 1px solid #ddd;
@@ -42,6 +43,15 @@
         }
         th {
             background-color: #f2f2f2;
+        }
+        .edit-mode input {
+            width: calc(100% - 22px);
+        }
+        .edit-buttons {
+            display: none;
+        }
+        .edit-mode .edit-buttons {
+            display: inline;
         }
     </style>
 </head>
@@ -66,7 +76,6 @@
         <input type="text" placeholder="Spieler 10">
         <input type="text" placeholder="Spieler 11">
     </div>
-    <button onclick="speichereKader('startelf')">Speichern</button>
 
     <h3>Ersatzspieler (8 Spieler)</h3>
     <div id="ersatzspieler">
@@ -79,26 +88,25 @@
         <input type="text" placeholder="Ersatzspieler 7">
         <input type="text" placeholder="Ersatzspieler 8">
     </div>
-    <button onclick="speichereKader('ersatzspieler')">Speichern</button>
 
-    <button onclick="bearbeiteKader()">Bearbeiten der Kader</button>
+    <button onclick="speichereKader()">Speichern</button>
 
     <div id="letzteAenderung"></div>
     <div id="gespeicherterKader"></div>
 
     <script>
-        function speichereKader(typ) {
+        function speichereKader() {
             const managerName = document.getElementById('managerName').value;
             if (!managerName) {
                 alert('Bitte gib deinen Namen ein!');
                 return;
             }
 
-            const spieler = Array.from(document.getElementById(typ).getElementsByTagName('input')).map(input => input.value);
+            const startelf = Array.from(document.getElementById('startelf').getElementsByTagName('input')).map(input => input.value);
+            const ersatzspieler = Array.from(document.getElementById('ersatzspieler').getElementsByTagName('input')).map(input => input.value);
             
             let kader = JSON.parse(localStorage.getItem('kader')) || {};
-            kader[managerName] = kader[managerName] || {};
-            kader[managerName][typ] = spieler;
+            kader[managerName] = { startelf, ersatzspieler };
 
             localStorage.setItem('kader', JSON.stringify(kader));
             localStorage.setItem('letzteAenderung', new Date().toLocaleString());
@@ -111,23 +119,19 @@
             const kader = JSON.parse(localStorage.getItem('kader'));
             let html = '<h3>Gespeicherte Kader</h3>';
             
-            if (kader) {
+            if (kader && Object.keys(kader).length > 0) {
                 for (const [manager, data] of Object.entries(kader)) {
                     html += `<h4>${manager}</h4>`;
-                    html += '<table>';
-                    html += '<tr><th>Position</th><th>Spieler</th></tr>';
+                    html += `<table id="kader-${manager}">`;
+                    html += '<tr><th>Position</th><th>Spieler</th><th>Aktionen</th></tr>';
                     
-                    if (data.startelf) {
-                        data.startelf.forEach((spieler, index) => {
-                            html += `<tr><td>Startelf ${index + 1}</td><td>${spieler}</td></tr>`;
-                        });
-                    }
+                    data.startelf.forEach((spieler, index) => {
+                        html += createPlayerRow(manager, 'startelf', index, spieler);
+                    });
                     
-                    if (data.ersatzspieler) {
-                        data.ersatzspieler.forEach((spieler, index) => {
-                            html += `<tr><td>Ersatz ${index + 1}</td><td>${spieler}</td></tr>`;
-                        });
-                    }
+                    data.ersatzspieler.forEach((spieler, index) => {
+                        html += createPlayerRow(manager, 'ersatzspieler', index, spieler);
+                    });
                     
                     html += '</table>';
                 }
@@ -138,36 +142,67 @@
             document.getElementById('gespeicherterKader').innerHTML = html;
         }
 
+        function createPlayerRow(manager, type, index, spieler) {
+            const position = type === 'startelf' ? `Startelf ${index + 1}` : `Ersatz ${index + 1}`;
+            return `
+                <tr id="${manager}-${type}-${index}">
+                    <td>${position}</td>
+                    <td>${spieler}</td>
+                    <td>
+                        <button onclick="bearbeiteEintrag('${manager}', '${type}', ${index})">Bearbeiten</button>
+                        <button onclick="loescheEintrag('${manager}', '${type}', ${index})">Löschen</button>
+                        <span class="edit-buttons">
+                            <button onclick="speichereAenderung('${manager}', '${type}', ${index})">Speichern</button>
+                            <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})">Abbrechen</button>
+                        </span>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function bearbeiteEintrag(manager, type, index) {
+            const row = document.getElementById(`${manager}-${type}-${index}`);
+            const spielerCell = row.cells[1];
+            const currentName = spielerCell.textContent;
+            spielerCell.innerHTML = `<input type="text" value="${currentName}">`;
+            row.classList.add('edit-mode');
+        }
+
+        function speichereAenderung(manager, type, index) {
+            const row = document.getElementById(`${manager}-${type}-${index}`);
+            const input = row.cells[1].querySelector('input');
+            const newName = input.value;
+
+            let kader = JSON.parse(localStorage.getItem('kader'));
+            kader[manager][type][index] = newName;
+            localStorage.setItem('kader', JSON.stringify(kader));
+
+            row.cells[1].textContent = newName;
+            row.classList.remove('edit-mode');
+
+            zeigeGespeichertenKader();
+            zeigeLetzteAenderung();
+        }
+
+        function abbrechenBearbeitung(manager, type, index) {
+            zeigeGespeichertenKader();
+        }
+
+        function loescheEintrag(manager, type, index) {
+            if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
+                let kader = JSON.parse(localStorage.getItem('kader'));
+                kader[manager][type].splice(index, 1);
+                localStorage.setItem('kader', JSON.stringify(kader));
+
+                zeigeGespeichertenKader();
+                zeigeLetzteAenderung();
+            }
+        }
+
         function zeigeLetzteAenderung() {
             const letzteAenderung = localStorage.getItem('letzteAenderung');
             if (letzteAenderung) {
                 document.getElementById('letzteAenderung').textContent = `Letzte Änderung: ${letzteAenderung}`;
-            }
-        }
-
-        function bearbeiteKader() {
-            const managerName = document.getElementById('managerName').value;
-            if (!managerName) {
-                alert('Bitte gib deinen Namen ein, um deinen Kader zu bearbeiten!');
-                return;
-            }
-
-            const kader = JSON.parse(localStorage.getItem('kader'));
-            if (kader && kader[managerName]) {
-                if (kader[managerName].startelf) {
-                    const startelfInputs = document.getElementById('startelf').getElementsByTagName('input');
-                    kader[managerName].startelf.forEach((spieler, index) => {
-                        if (startelfInputs[index]) startelfInputs[index].value = spieler;
-                    });
-                }
-                if (kader[managerName].ersatzspieler) {
-                    const ersatzInputs = document.getElementById('ersatzspieler').getElementsByTagName('input');
-                    kader[managerName].ersatzspieler.forEach((spieler, index) => {
-                        if (ersatzInputs[index]) ersatzInputs[index].value = spieler;
-                    });
-                }
-            } else {
-                alert('Kein gespeicherter Kader für diesen Manager gefunden.');
             }
         }
 
