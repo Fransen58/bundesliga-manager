@@ -147,22 +147,21 @@
         }
 
         function createPlayerRow(manager, type, index, spieler) {
-            const position = type === 'startelf' ? `Startelf ${index + 1}` : `Ersatz ${index + 1}`;
-            return `
-                <tr id="${manager}-${type}-${index}">
-                    <td>${position}</td>
-                    <td>${spieler}</td>
-                    <td>
-                        <button onclick="bearbeiteEintrag('${manager}', '${type}', ${index})">Bearbeiten</button>
-                        <button onclick="loescheEintrag('${manager}', '${type}', ${index})">Löschen</button>
-                        <span class="edit-buttons">
-                            <button onclick="speichereAenderung('${manager}', '${type}', ${index})" ${isEditingDisabled()}>Speichern</button>
-                            <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})" ${isEditingDisabled()}>Abbrechen</button>
-                        </span>
-                    </td>
-                </tr>
-            `;
-        }
+    const position = type === 'startelf' ? `Startelf ${index + 1}` : `Ersatz ${index + 1}`;
+    return `
+        <tr id="${manager}-${type}-${index}">
+            <td>${position}</td>
+            <td>${spieler}</td>
+            <td>
+                <button onclick="bearbeiteEintrag('${manager}', '${type}', ${index})">Bearbeiten</button>
+                <span class="edit-buttons">
+                    <button onclick="speichereAenderung('${manager}', '${type}', ${index})">Speichern</button>
+                    <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})">Abbrechen</button>
+                </span>
+            </td>
+        </tr>
+    `;
+}
 
         function isEditingDisabled() {
             return currentEditingManager === null ? 'disabled' : '';
