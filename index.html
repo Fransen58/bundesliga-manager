@@ -12,86 +12,93 @@
             margin: 0 auto;
             padding: 20px;
         }
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
         h1 {
-            color: #333;
-        }
-        .logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .table-container {
-            margin: 40px auto;
-            width: 80%;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
             text-align: center;
-        }
-        th {
-            background-color: #f1f1f1;
-        }
-        .title {
             font-size: 2.5em;
             color: #333;
             font-weight: bold;
         }
-        .subtitle {
+        h2 {
+            text-align: center;
             font-size: 1.2em;
             color: #555;
             margin-top: 15px;
         }
-        .kader-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
         }
-        .kader-table {
-            width: 120px;
-            margin: 10px;
-            border-collapse: collapse;
-        }
-        .kader-table th, .kader-table td {
-            text-align: left;
-            padding: 5px;
+        th, td {
             border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
-        .button-container {
-            margin-top: 10px;
+        th {
+            background-color: #f3f3f3;
         }
-         .button-container button:disabled {
+        .edit-mode input {
+            width: calc(100% - 10px);
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+        }
+        button[disabled] {
             background-color: #ccc;
             cursor: not-allowed;
-        }
-         .button-container button:not(:disabled) {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="logo-container">
-        <img src="1.png" alt="Bundesliga Manager Logo">
-        <div class="title">Bundesliga Manager</div>
-        <div class="subtitle">Fairness. Spaß. Wettkampf.</div>
-    </div>
+    <img src="1.png" alt="Bundesliga Manager Logo" class="logo" onclick="window.location.href='index.html'">
+    <h1>Bundesliga Manager</h1>
+    <h2>Fairness. Spaß. Wettkampf.</h2>
 
-    <h2>Die Tabelle</h2>
-    <div class="table-container">
-        <table>
-            <thead>
+    <h3>Die Tabelle</h3>
+    <table id="bundesligaTable">
+        <tr>
+            <th>Platz</th>
+            <th>Manager</th>
+            <th>Noten</th>
+            <th>Tore</th>
+            <th>Gegentore</th>
+            <th>11 des Tages</th>
+            <th>Assists</th>
+            <th>Gesamt</th>
+        </tr>
+    </table>
+
+    <button id="editBtn" onclick="toggleEdit()">Bearbeiten</button>
+    <button id="saveBtn" onclick="saveChanges()" disabled>Speichern</button>
+    <button id="cancelBtn" onclick="cancelEdit()" disabled>Abbrechen</button>
+
+    <script>
+        let isEditing = false;
+        const tableData = [
+            { platz: 1, manager: "", noten: 0, tore: 0, gegentore: 0, elf: 0, assists: 0, gesamt: 0 },
+            { platz: 2, manager: "", noten: 0, tore: 0, gegentore: 0, elf: 0, assists: 0, gesamt: 0 },
+            { platz: 3, manager: "", noten: 0, tore: 0, gegentore: 0, elf: 0, assists: 0, gesamt: 0 },
+            { platz: 4, manager: "", noten: 0, tore: 0, gegentore: 0, elf: 0, assists: 0, gesamt: 0 },
+            { platz: 5, manager: "", noten: 0, tore: 0, gegentore: 0, elf: 0, assists: 0, gesamt: 0 }
+        ];
+
+        function initTable() {
+            const storedData = localStorage.getItem('bundesligaTableData');
+            if (storedData) {
+                Object.assign(tableData, JSON.parse(storedData));
+            }
+            renderTable();
+        }
+
+        function renderTable() {
+            const table = document.getElementById('bundesligaTable');
+            table.innerHTML = `
                 <tr>
                     <th>Platz</th>
                     <th>Manager</th>
@@ -102,327 +109,52 @@
                     <th>Assists</th>
                     <th>Gesamt</th>
                 </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td contenteditable="false">1.</td>
-                    <td contenteditable="true">Bent</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                </tr>
-                <tr>
-                    <td contenteditable="false">2.</td>
-                    <td contenteditable="true">Leon I.</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                </tr>
-                <tr>
-                    <td contenteditable="false">3.</td>
-                    <td contenteditable="true">Leon B.</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                </tr>
-                <tr>
-                    <td contenteditable="false">4.</td>
-                    <td contenteditable="true">Moritz</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                </tr>
-                <tr>
-                    <td contenteditable="false">5.</td>
-                    <td contenteditable="true">Jonas</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true">0</td>
-                </tr>
-              </tbody>
-        </table>
-        <div class="button-container">
-            <button onclick="editTable('main-table')">Bearbeiten</button>
-            <button onclick="saveTable('main-table')" disabled>Speichern</button>
-            <button onclick="cancelEdit('main-table')" disabled>Abbrechen</button>
-        </div>
-    </div>
-
-    <h2>Die Kader</h2>
-    <div class="kader-section">
-        <!-- Tabelle für Bent -->
-        <div>
-            <table class="kader-table">
-                <thead>
-                    <tr>
-                        <th>Bent</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td contenteditable="true">1.</td></tr>
-                    <tr><td contenteditable="true">2.</td></tr>
-                    <tr><td contenteditable="true">3.</td></tr>
-                    <tr><td contenteditable="true">4.</td></tr>
-                    <tr><td contenteditable="true">5.</td></tr>
-                    <tr><td contenteditable="true">6.</td></tr>
-                    <tr><td contenteditable="true">7.</td></tr>
-                    <tr><td contenteditable="true">8.</td></tr>
-                    <tr><td contenteditable="true">9.</td></tr>
-                    <tr><td contenteditable="true">10.</td></tr>
-                    <tr><td contenteditable="true">11.</td></tr>
-                    <tr><td contenteditable="true">12.</td></tr>
-                    <tr><td contenteditable="true">13.</td></tr>
-                    <tr><td contenteditable="true">14.</td></tr>
-                    <tr><td contenteditable="true">15.</td></tr>
-                    <tr><td contenteditable="true">16.</td></tr>
-                    <tr><td contenteditable="true">17.</td></tr>
-                    <tr><td contenteditable="true">18.</td></tr>
-                    <tr><td contenteditable="true">19.</td></tr>
-                    <tr><td contenteditable="true">20.</td></tr>
-                </tbody>
-            </table>
-            <div class="button-container">
-                <button onclick="editTable('bent')">Bearbeiten</button>
-                <button onclick="saveTable('bent')" disabled>Speichern</button>
-                <button onclick="cancelEdit('bent')" disabled>Abbrechen</button>
-            </div>
-        </div>
-
-        <!-- Tabelle für Leon I. -->
-        <div>
-            <table class="kader-table">
-                <thead>
-                    <tr>
-                        <th>Leon I.</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td contenteditable="true">1.</td></tr>
-                    <tr><td contenteditable="true">2.</td></tr>
-                    <tr><td contenteditable="true">3.</td></tr>
-                    <tr><td contenteditable="true">4.</td></tr>
-                    <tr><td contenteditable="true">5.</td></tr>
-                    <tr><td contenteditable="true">6.</td></tr>
-                    <tr><td contenteditable="true">7.</td></tr>
-                    <tr><td contenteditable="true">8.</td></tr>
-                    <tr><td contenteditable="true">9.</td></tr>
-                    <tr><td contenteditable="true">10.</td></tr>
-                    <tr><td contenteditable="true">11.</td></tr>
-                    <tr><td contenteditable="true">12.</td></tr>
-                    <tr><td contenteditable="true">13.</td></tr>
-                    <tr><td contenteditable="true">14.</td></tr>
-                    <tr><td contenteditable="true">15.</td></tr>
-                    <tr><td contenteditable="true">16.</td></tr>
-                    <tr><td contenteditable="true">17.</td></tr>
-                    <tr><td contenteditable="true">18.</td></tr>
-                    <tr><td contenteditable="true">19.</td></tr>
-                    <tr><td contenteditable="true">20.</td></tr>
-                </tbody>
-            </table>
-            <div class="button-container">
-                <button onclick="editTable('leonI')">Bearbeiten</button>
-                <button onclick="saveTable('leonI')" disabled>Speichern</button>
-                <button onclick="cancelEdit('leonI')" disabled>Abbrechen</button>
-            </div>
-        </div>
-
-        <!-- Tabelle für Leon B. -->
-        <div>
-            <table class="kader-table">
-                <thead>
-                    <tr>
-                        <th>Leon B.</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td contenteditable="true">1.</td></tr>
-                    <tr><td contenteditable="true">2.</td></tr>
-                    <tr><td contenteditable="true">3.</td></tr>
-                    <tr><td contenteditable="true">4.</td></tr>
-                    <tr><td contenteditable="true">5.</td></tr>
-                    <tr><td contenteditable="true">6.</td></tr>
-                    <tr><td contenteditable="true">7.</td></tr>
-                    <tr><td contenteditable="true">8.</td></tr>
-                    <tr><td contenteditable="true">9.</td></tr>
-                    <tr><td contenteditable="true">10.</td></tr>
-                    <tr><td contenteditable="true">11.</td></tr>
-                    <tr><td contenteditable="true">12.</td></tr>
-                    <tr><td contenteditable="true">13.</td></tr>
-                    <tr><td contenteditable="true">14.</td></tr>
-                    <tr><td contenteditable="true">15.</td></tr>
-                    <tr><td contenteditable="true">16.</td></tr>
-                    <tr><td contenteditable="true">17.</td></tr>
-                    <tr><td contenteditable="true">18.</td></tr>
-                    <tr><td contenteditable="true">19.</td></tr>
-                    <tr><td contenteditable="true">20.</td></tr>
-                </tbody>
-            </table>
-            <div class="button-container">
-                <button onclick="editTable('leonB')">Bearbeiten</button>
-                <button onclick="saveTable('leonB')" disabled>Speichern</button>
-                <button onclick="cancelEdit('leonB')" disabled>Abbrechen</button>
-            </div>
-        </div>
-
-        <!-- Tabelle für Moritz -->
-        <div>
-            <table class="kader-table">
-                <thead>
-                    <tr>
-                        <th>Moritz</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td contenteditable="true">1.</td></tr>
-                    <tr><td contenteditable="true">2.</td></tr>
-                    <tr><td contenteditable="true">3.</td></tr>
-                    <tr><td contenteditable="true">4.</td></tr>
-                    <tr><td contenteditable="true">5.</td></tr>
-                    <tr><td contenteditable="true">6.</td></tr>
-                    <tr><td contenteditable="true">7.</td></tr>
-                    <tr><td contenteditable="true">8.</td></tr>
-                    <tr><td contenteditable="true">9.</td></tr>
-                    <tr><td contenteditable="true">10.</td></tr>
-                    <tr><td contenteditable="true">11.</td></tr>
-                    <tr><td contenteditable="true">12.</td></tr>
-                    <tr><td contenteditable="true">13.</td></tr>
-                    <tr><td contenteditable="true">14.</td></tr>
-                    <tr><td contenteditable="true">15.</td></tr>
-                    <tr><td contenteditable="true">16.</td></tr>
-                    <tr><td contenteditable="true">17.</td></tr>
-                    <tr><td contenteditable="true">18.</td></tr>
-                    <tr><td contenteditable="true">19.</td></tr>
-                    <tr><td contenteditable="true">20.</td></tr>
-                </tbody>
-            </table>
-            <div class="button-container">
-                <button onclick="editTable('moritz')">Bearbeiten</button>
-                <button onclick="saveTable('moritz')" disabled>Speichern</button>
-                <button onclick="cancelEdit('moritz')" disabled>Abbrechen</button>
-            </div>
-        </div>
-
-        <!-- Tabelle für Jonas -->
-        <div>
-            <table class="kader-table">
-                <thead>
-                    <tr>
-                        <th>Jonas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td contenteditable="true">1.</td></tr>
-                    <tr><td contenteditable="true">2.</td></tr>
-                    <tr><td contenteditable="true">3.</td></tr>
-                    <tr><td contenteditable="true">4.</td></tr>
-                    <tr><td contenteditable="true">5.</td></tr>
-                    <tr><td contenteditable="true">6.</td></tr>
-                    <tr><td contenteditable="true">7.</td></tr>
-                    <tr><td contenteditable="true">8.</td></tr>
-                    <tr><td contenteditable="true">9.</td></tr>
-                    <tr><td contenteditable="true">10.</td></tr>
-                    <tr><td contenteditable="true">11.</td></tr>
-                    <tr><td contenteditable="true">12.</td></tr>
-                    <tr><td contenteditable="true">13.</td></tr>
-                    <tr><td contenteditable="true">14.</td></tr>
-                    <tr><td contenteditable="true">15.</td></tr>
-                    <tr><td contenteditable="true">16.</td></tr>
-                    <tr><td contenteditable="true">17.</td></tr>
-                    <tr><td contenteditable="true">18.</td></tr>
-                    <tr><td contenteditable="true">19.</td></tr>
-                    <tr><td contenteditable="true">20.</td></tr>
-                </tbody>
-            </table>
-            <div class="button-container">
-                <button onclick="editTable('jonas')">Bearbeiten</button>
-                <button onclick="saveTable('jonas')" disabled>Speichern</button>
-                <button onclick="cancelEdit('jonas')" disabled>Abbrechen</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let originalData = {};
-
-        function editTable(tableId) {
-            const table = document.getElementById(tableId);
-            const rows = table.querySelectorAll('tbody tr');
-            originalData[tableId] = [];
-
-            rows.forEach((row, rowIndex) => {
-                const cells = row.querySelectorAll('td');
-                originalData[tableId][rowIndex] = [];
-
-                cells.forEach((cell, cellIndex) => {
-                    if (tableId === 'main-table' && (cellIndex === 0 || cellIndex === 1)) {
-                        // Skip editing for Platz and Manager columns in main table
-                        return;
-                    }
-                    originalData[tableId][rowIndex][cellIndex] = cell.textContent;
-                    cell.contentEditable = true;
-                });
+            `;
+            tableData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.platz}.</td>
+                    <td>${isEditing ? `<input type="text" value="${row.manager}">` : row.manager}</td>
+                    <td>${isEditing ? `<input type="number" value="${row.noten}">` : row.noten}</td>
+                    <td>${isEditing ? `<input type="number" value="${row.tore}">` : row.tore}</td>
+                    <td>${isEditing ? `<input type="number" value="${row.gegentore}">` : row.gegentore}</td>
+                    <td>${isEditing ? `<input type="number" value="${row.elf}">` : row.elf}</td>
+                    <td>${isEditing ? `<input type="number" value="${row.assists}">` : row.assists}</td>
+                    <td>${isEditing ? `<input type="number" value="${row.gesamt}">` : row.gesamt}</td>
+                `;
+                table.appendChild(tr);
             });
-
-            toggleButtons(tableId, true);
         }
 
-        function saveTable(tableId) {
-            const table = document.getElementById(tableId);
-            const rows = table.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                cells.forEach(cell => {
-                    cell.contentEditable = false;
-                });
-            });
-
-            toggleButtons(tableId, false);
-            // Here you could add code to save the data (e.g., to localStorage or send to a server)
+        function toggleEdit() {
+            isEditing = !isEditing;
+            document.getElementById('editBtn').disabled = isEditing;
+            document.getElementById('saveBtn').disabled = !isEditing;
+            document.getElementById('cancelBtn').disabled = !isEditing;
+            renderTable();
         }
 
-        function cancelEdit(tableId) {
-            const table = document.getElementById(tableId);
-            const rows = table.querySelectorAll('tbody tr');
-
-            rows.forEach((row, rowIndex) => {
-                const cells = row.querySelectorAll('td');
-                cells.forEach((cell, cellIndex) => {
-                    if (originalData[tableId][rowIndex] && originalData[tableId][rowIndex][cellIndex]) {
-                        cell.textContent = originalData[tableId][rowIndex][cellIndex];
-                    }
-                    cell.contentEditable = false;
-                });
-            });
-
-            toggleButtons(tableId, false);
+        function saveChanges() {
+            const rows = document.getElementById('bundesligaTable').rows;
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                tableData[i-1].manager = cells[1].firstChild.value;
+                tableData[i-1].noten = parseInt(cells[2].firstChild.value);
+                tableData[i-1].tore = parseInt(cells[3].firstChild.value);
+                tableData[i-1].gegentore = parseInt(cells[4].firstChild.value);
+                tableData[i-1].elf = parseInt(cells[5].firstChild.value);
+                tableData[i-1].assists = parseInt(cells[6].firstChild.value);
+                tableData[i-1].gesamt = parseInt(cells[7].firstChild.value);
+            }
+            localStorage.setItem('bundesligaTableData', JSON.stringify(tableData));
+            toggleEdit();
         }
 
-        function toggleButtons(tableId, isEditing) {
-            const container = document.getElementById(tableId).nextElementSibling;
-            const buttons = container.querySelectorAll('button');
-            
-            buttons[0].disabled = isEditing; // Edit button
-            buttons[1].disabled = !isEditing; // Save button
-            buttons[2].disabled = !isEditing; // Cancel button
+        function cancelEdit() {
+            toggleEdit();
         }
+
+        initTable();
     </script>
-
-    <a href="spieltagskader.html">Zu den Spieltagskadern</a>
 </body>
 </html>
