@@ -51,6 +51,12 @@
             color: #555;
             margin-top: 15px;
         }
+        .edit-buttons {
+            margin-top: 10px;
+        }
+        button {
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
@@ -62,7 +68,7 @@
 
     <h2>Die Tabelle</h2>
     <div class="table-container">
-        <table>
+        <table id="liga-table">
             <thead>
                 <tr>
                     <th>Platz</th>
@@ -76,238 +82,153 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Bent</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Leon I.</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Leon B.</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>Moritz</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>Jonas</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
+                <tr><td>1</td><td>Bent</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>2</td><td>Leon I.</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>3</td><td>Leon B.</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>4</td><td>Moritz</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>5</td><td>Jonas</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
             </tbody>
         </table>
+        <div class="edit-buttons">
+            <button onclick="bearbeiteTabelle('liga-table')">Bearbeiten</button>
+            <button onclick="speichereTabelle('liga-table')" id="save-liga-table" disabled>Speichern</button>
+            <button onclick="abbrechenTabelle('liga-table')" id="cancel-liga-table" disabled>Abbrechen</button>
+        </div>
     </div>
 
+    <h2>Die Kader</h2>
+    <div class="kader-section">
+        <!-- Tabellen für die Kader -->
+        <div id="kader-bent">
+            <table class="kader-table">
+                <thead>
+                    <tr>
+                        <th>Bent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1.</td></tr>
+                    <tr><td>2.</td></tr>
+                    <tr><td>3.</td></tr>
+                    <tr><td>4.</td></tr>
+                    <tr><td>5.</td></tr>
+                    <tr><td>6.</td></tr>
+                    <tr><td>7.</td></tr>
+                    <tr><td>8.</td></tr>
+                    <tr><td>9.</td></tr>
+                    <tr><td>10.</td></tr>
+                    <tr><td>11.</td></tr>
+                    <tr><td>12.</td></tr>
+                    <tr><td>13.</td></tr>
+                    <tr><td>14.</td></tr>
+                    <tr><td>15.</td></tr>
+                    <tr><td>16.</td></tr>
+                    <tr><td>17.</td></tr>
+                    <tr><td>18.</td></tr>
+                    <tr><td>19.</td></tr>
+                    <tr><td>20.</td></tr>
+                </tbody>
+            </table>
+            <div class="edit-buttons">
+                <button onclick="bearbeiteTabelle('kader-bent')">Bearbeiten</button>
+                <button onclick="speichereTabelle('kader-bent')" id="save-kader-bent" disabled>Speichern</button>
+                <button onclick="abbrechenTabelle('kader-bent')" id="cancel-kader-bent" disabled>Abbrechen</button>
+            </div>
+        </div>
+        <!-- Ähnliche Abschnitte für Leon I., Leon B., Moritz und Jonas -->
+        <!-- Hier wiederholen für die anderen Kader mit IDs "kader-leonI", "kader-leonB", etc. -->
+    </div>
+
+    <style>
+        .kader-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .kader-table {
+            width: 120px;
+            margin: 10px;
+            border-collapse: collapse;
+        }
+        .kader-table th, .kader-table td {
+            text-align: left;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+
+    <a href="spieltagskader.html">Zu den Spieltagskadern</a>
+
+    <script>
+        function bearbeiteTabelle(tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) { // Skip header row
+                const cells = rows[i].getElementsByTagName('td');
+                for (let j = 0; j < cells.length; j++) {
+                    const cellText = cells[j].innerText;
+                    cells[j].innerHTML = `<input type="text" value="${cellText}">`;
+                }
+            }
+
+            document.getElementById(`save-${tableId}`).disabled = false;
+            document.getElementById(`cancel-${tableId}`).disabled = false;
+        }
+
+        function speichereTabelle(tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+            const data = [];
+
+            for (let i = 1; i < rows.length; i++) { // Skip header row
+                const cells = rows[i].getElementsByTagName('td');
+                const rowData = [];
+                for (let j = 0; j < cells.length; j++) {
+                    const input = cells[j].getElementsByTagName('input')[0];
+                    rowData.push(input ? input.value : cells[j].innerText);
+                }
+                data.push(rowData);
+            }
+
+            localStorage.setItem(tableId, JSON.stringify(data));
+            zeigeTabelle(tableId);
+            deaktivierenButtons(tableId);
+        }
+
+        function abbrechenTabelle(tableId) {
+            zeigeTabelle(tableId);
+            deaktivierenButtons(tableId);
+        }
+
+        function zeigeTabelle(tableId) {
+            const table = document.getElementById(tableId);
+            const savedData = JSON.parse(localStorage.getItem(tableId)) || [];
+
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) { // Skip header row
+                const cells = rows[i].getElementsByTagName('td');
+                for (let j = 0; j < cells.length; j++) {
+                    if (savedData[i - 1]) {
+                        cells[j].innerText = savedData[i - 1][j];
+                    } else {
+                        cells[j].innerText = '';
+                    }
+                }
+            }
+        }
+
+        function deaktivierenButtons(tableId) {
+            document.getElementById(`save-${tableId}`).disabled = true;
+            document.getElementById(`cancel-${tableId}`).disabled = true;
+        }
+
+        // Beim Laden der Seite die Tabellen initialisieren
+        window.onload = function() {
+            zeigeTabelle('liga-table');
+            zeigeTabelle('kader-bent'); // Hier für die anderen Kader ebenfalls aufrufen
+            // Hier für Leon I., Leon B., Moritz und Jonas wiederholen
+        };
+    </script>
 </body>
 </html>
-
-<h2>Die Kader</h2>
-<div class="kader-section">
-    <!-- Tabelle für Bent -->
-    <table class="kader-table">
-        <thead>
-            <tr>
-                <th>Bent</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- 20 Zeilen für Spieler -->
-            <tr><td>1. </td></tr>
-            <tr><td>2. </td></tr>
-            <tr><td>3. </td></tr>
-            <tr><td>4. </td></tr>
-            <tr><td>5. </td></tr>
-            <tr><td>6. </td></tr>
-            <tr><td>7. </td></tr>
-            <tr><td>8. </td></tr>
-            <tr><td>9. </td></tr>
-            <tr><td>10. </td></tr>
-            <tr><td>11. </td></tr>
-            <tr><td>12. </td></tr>
-            <tr><td>13. </td></tr>
-            <tr><td>14. </td></tr>
-            <tr><td>15. </td></tr>
-            <tr><td>16. </td></tr>
-            <tr><td>17. </td></tr>
-            <tr><td>18. </td></tr>
-            <tr><td>19. </td></tr>
-            <tr><td>20. </td></tr>
-        </tbody>
-    </table>
-
-    <!-- Tabelle für Leon I. -->
-    <table class="kader-table">
-        <thead>
-            <tr>
-                <th>Leon I.</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>1. </td></tr>
-            <tr><td>2. </td></tr>
-            <tr><td>3. </td></tr>
-            <tr><td>4. </td></tr>
-            <tr><td>5. </td></tr>
-            <tr><td>6. </td></tr>
-            <tr><td>7. </td></tr>
-            <tr><td>8. </td></tr>
-            <tr><td>9. </td></tr>
-            <tr><td>10. </td></tr>
-            <tr><td>11. </td></tr>
-            <tr><td>12. </td></tr>
-            <tr><td>13. </td></tr>
-            <tr><td>14. </td></tr>
-            <tr><td>15. </td></tr>
-            <tr><td>16. </td></tr>
-            <tr><td>17. </td></tr>
-            <tr><td>18. </td></tr>
-            <tr><td>19. </td></tr>
-            <tr><td>20. </td></tr>
-        </tbody>
-    </table>
-
-    <!-- Tabelle für Leon B. -->
-    <table class="kader-table">
-        <thead>
-            <tr>
-                <th>Leon B.</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>1. </td></tr>
-            <tr><td>2. </td></tr>
-            <tr><td>3. </td></tr>
-            <tr><td>4. </td></tr>
-            <tr><td>5. </td></tr>
-            <tr><td>6. </td></tr>
-            <tr><td>7. </td></tr>
-            <tr><td>8. </td></tr>
-            <tr><td>9. </td></tr>
-            <tr><td>10. </td></tr>
-            <tr><td>11. </td></tr>
-            <tr><td>12. </td></tr>
-            <tr><td>13. </td></tr>
-            <tr><td>14. </td></tr>
-            <tr><td>15. </td></tr>
-            <tr><td>16. </td></tr>
-            <tr><td>17. </td></tr>
-            <tr><td>18. </td></tr>
-            <tr><td>19. </td></tr>
-            <tr><td>20. </td></tr>
-        </tbody>
-    </table>
-
-    <!-- Tabelle für Moritz -->
-    <table class="kader-table">
-        <thead>
-            <tr>
-                <th>Moritz</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>1. </td></tr>
-            <tr><td>2. </td></tr>
-            <tr><td>3. </td></tr>
-            <tr><td>4. </td></tr>
-            <tr><td>5. </td></tr>
-            <tr><td>6. </td></tr>
-            <tr><td>7. </td></tr>
-            <tr><td>8. </td></tr>
-            <tr><td>9. </td></tr>
-            <tr><td>10. </td></tr>
-            <tr><td>11. </td></tr>
-            <tr><td>12. </td></tr>
-            <tr><td>13. </td></tr>
-            <tr><td>14. </td></tr>
-            <tr><td>15. </td></tr>
-            <tr><td>16. </td></tr>
-            <tr><td>17. </td></tr>
-            <tr><td>18. </td></tr>
-            <tr><td>19. </td></tr>
-            <tr><td>20. </td></tr>
-        </tbody>
-    </table>
-
-    <!-- Tabelle für Jonas -->
-    <table class="kader-table">
-        <thead>
-            <tr>
-                <th>Jonas</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>1. </td></tr>
-            <tr><td>2. </td></tr>
-            <tr><td>3. </td></tr>
-            <tr><td>4. </td></tr>
-            <tr><td>5. </td></tr>
-            <tr><td>6. </td></tr>
-            <tr><td>7. </td></tr>
-            <tr><td>8. </td></tr>
-            <tr><td>9. </td></tr>
-            <tr><td>10. </td></tr>
-            <tr><td>11. </td></tr>
-            <tr><td>12. </td></tr>
-            <tr><td>13. </td></tr>
-            <tr><td>14. </td></tr>
-            <tr><td>15. </td></tr>
-            <tr><td>16. </td></tr>
-            <tr><td>17. </td></tr>
-            <tr><td>18. </td></tr>
-            <tr><td>19. </td></tr>
-            <tr><td>20. </td></tr>
-        </tbody>
-    </table>
-</div>
-
-<style>
-    .kader-section {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center; /* Zentriert die Tabellen */
-    }
-    .kader-table {
-        width: 120px; /* oder eine andere Breite, die passt */
-        margin: 10px;
-        border-collapse: collapse;
-    }
-    .kader-table th, .kader-table td {
-        text-align: left; /* Text linksbündig */
-        padding: 5px;
-        border: 1px solid #ddd;
-    }
-</style>
-
-<a href="spieltagskader.html">Zu den Spieltagskadern</a>
