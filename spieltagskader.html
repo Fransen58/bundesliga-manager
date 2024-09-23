@@ -3,34 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bundesliga Manager - Spieltagskader</title>
+    <title>Bundesliga Manager</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
-            text-align: center;
-            margin: 0;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
         }
-        h1 {
-            color: #333;
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
         }
-        .logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .title {
-            font-size: 2.5em;
-            color: #333;
-            font-weight: bold;
-        }
-        .subtitle {
-            font-size: 1.2em;
-            color: #555;
-            margin-top: 15px;
+        h1, h2 {
+            text-align: center;
         }
         input[type="text"] {
             width: calc(25% - 10px);
@@ -59,33 +47,21 @@
             text-align: left;
         }
         th {
-            background-color: #f1f1f1;
+            background-color: #f3f3f3;
         }
-        .kader-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .kader-table {
-            width: 120px; /* oder eine andere Breite, die passt */
-            margin: 10px;
-            border-collapse: collapse;
-        }
-        .kader-table th, .kader-table td {
-            text-align: left;
-            padding: 5px;
-            border: 1px solid #ddd;
+        .edit-mode input {
+            width: calc(100% - 22px);
         }
     </style>
 </head>
 <body>
-    <div class="logo-container">
-        <img src="1.png" alt="Bundesliga Manager Logo">
-        <div class="title">Bundesliga Manager</div>
-        <div class="subtitle">Fairness. Spaß. Wettkampf.</div>
-    </div>
+    <img src="1.png" alt="Bundesliga Manager Logo" class="logo" onclick="window.location.href='index.html'">
+    <h1>Bundesliga Manager</h1>
+    <h2>Fairness. Spaß. Wettkampf.</h2>
 
-    <h2>Die Kader</h2>
+    <input type="text" id="managerName" placeholder="Dein Name" style="width: calc(100% - 10px);">
+
+    <h3>Startelfspieler (11 Spieler)</h3>
     <div id="startelf">
         <input type="text" placeholder="Spieler 1">
         <input type="text" placeholder="Spieler 2">
@@ -98,6 +74,18 @@
         <input type="text" placeholder="Spieler 9">
         <input type="text" placeholder="Spieler 10">
         <input type="text" placeholder="Spieler 11">
+    </div>
+
+    <h3>Ersatzspieler (8 Spieler)</h3>
+    <div id="ersatzspieler">
+        <input type="text" placeholder="Ersatzspieler 1">
+        <input type="text" placeholder="Ersatzspieler 2">
+        <input type="text" placeholder="Ersatzspieler 3">
+        <input type="text" placeholder="Ersatzspieler 4">
+        <input type="text" placeholder="Ersatzspieler 5">
+        <input type="text" placeholder="Ersatzspieler 6">
+        <input type="text" placeholder="Ersatzspieler 7">
+        <input type="text" placeholder="Ersatzspieler 8">
     </div>
 
     <button onclick="speichereKader()">Speichern</button>
@@ -117,10 +105,11 @@
             }
 
             const startelf = Array.from(document.getElementById('startelf').getElementsByTagName('input')).map(input => input.value);
+            const ersatzspieler = Array.from(document.getElementById('ersatzspieler').getElementsByTagName('input')).map(input => input.value);
             const letzteAenderung = new Date().toLocaleString();
 
             let kader = JSON.parse(localStorage.getItem('kader')) || {};
-            kader[managerName] = { startelf, letzteAenderung };
+            kader[managerName] = { startelf, ersatzspieler, letzteAenderung };
 
             localStorage.setItem('kader', JSON.stringify(kader));
 
@@ -129,21 +118,26 @@
 
         function zeigeGespeichertenKader() {
             const kader = JSON.parse(localStorage.getItem('kader'));
-            let html = '';
-
+            let html = '<h3>Gespeicherte Kader</h3>';
+            
             if (kader && Object.keys(kader).length > 0) {
                 for (const [manager, data] of Object.entries(kader)) {
                     html += `<h4>${manager}</h4>`;
                     html += `<p>Letzte Änderung: ${data.letzteAenderung}</p>`;
                     html += `<table id="kader-${manager}">`;
                     html += '<tr><th>Position</th><th>Spieler</th><th>Aktionen</th></tr>';
-
+                    
                     data.startelf.forEach((spieler, index) => {
                         html += createPlayerRow(manager, 'startelf', index, spieler);
                     });
-
+                    
+                    data.ersatzspieler.forEach((spieler, index) => {
+                        html += createPlayerRow(manager, 'ersatzspieler', index, spieler);
+                    });
+                    
                     html += '</table>';
                     html += `<button onclick="loescheKader('${manager}')">Gesamten Kader Löschen</button>`;
+                    html += `<button onclick="bestaetigeKader('${manager}')">Kader Bestätigen</button>`;
                 }
             } else {
                 html += '<p>Noch keine Kader gespeichert.</p>';
@@ -153,7 +147,7 @@
         }
 
         function createPlayerRow(manager, type, index, spieler) {
-            const position = `Spieler ${index + 1}`;
+            const position = type === 'startelf' ? `Startelf ${index + 1}` : `Ersatz ${index + 1}`;
             return `
                 <tr id="${manager}-${type}-${index}">
                     <td>${position}</td>
@@ -161,26 +155,102 @@
                     <td>
                         <button onclick="bearbeiteEintrag('${manager}', '${type}', ${index})">Bearbeiten</button>
                         <button onclick="loescheEintrag('${manager}', '${type}', ${index})">Löschen</button>
+                        <span class="edit-buttons">
+                            <button onclick="speichereAenderung('${manager}', '${type}', ${index})" ${isEditingDisabled()}>Speichern</button>
+                            <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})" ${isEditingDisabled()}>Abbrechen</button>
+                        </span>
                     </td>
                 </tr>
             `;
         }
 
+        function isEditingDisabled() {
+            return currentEditingManager === null ? 'disabled' : '';
+        }
+
         function bearbeiteEintrag(manager, type, index) {
-            // Bearbeitungslogik hier
+            const row = document.getElementById(`${manager}-${type}-${index}`);
+            const spielerCell = row.cells[1];
+            const currentName = spielerCell.textContent;
+            spielerCell.innerHTML = `<input type="text" value="${currentName}">`;
+            row.classList.add('edit-mode');
+
+            // Setze die aktuellen Bearbeitungsvariablen
+            currentEditingManager = manager;
+            currentEditingType = type;
+            currentEditingIndex = index;
+
+            // Aktiviere die Speichern und Abbrechen Buttons
+            updateEditButtons();
+        }
+
+        function updateEditButtons() {
+            const buttons = document.querySelectorAll('.edit-buttons button');
+            buttons.forEach(button => {
+                button.disabled = false; // Alle Buttons aktivieren
+            });
+        }
+
+        function speichereAenderung(manager, type, index) {
+            const row = document.getElementById(`${manager}-${type}-${index}`);
+            const input = row.cells[1].querySelector('input');
+            const newName = input.value;
+
+            let kader = JSON.parse(localStorage.getItem('kader'));
+            kader[manager][type][index] = newName;
+            kader[manager].letzteAenderung = new Date().toLocaleString(); // Aktualisiere die letzte Änderung
+            localStorage.setItem('kader', JSON.stringify(kader));
+
+            row.cells[1].textContent = newName;
+            row.classList.remove('edit-mode');
+
+            // Setze die Bearbeitungsvariablen zurück
+            currentEditingManager = null;
+            currentEditingType = null;
+            currentEditingIndex = null;
+
+            zeigeGespeichertenKader();
+        }
+
+        function abbrechenBearbeitung(manager, type, index) {
+            zeigeGespeichertenKader();
+
+            // Setze die Bearbeitungsvariablen zurück
+            currentEditingManager = null;
+            currentEditingType = null;
+            currentEditingIndex = null;
         }
 
         function loescheEintrag(manager, type, index) {
-            // Löschlogik hier
+            if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
+                let kader = JSON.parse(localStorage.getItem('kader'));
+                kader[manager][type].splice(index, 1);
+                localStorage.setItem('kader', JSON.stringify(kader));
+
+                zeigeGespeichertenKader();
+            }
         }
 
         function loescheKader(manager) {
-            // Löschlogik hier
+            if (confirm('Möchten Sie den gesamten Kader wirklich löschen?')) {
+                let kader = JSON.parse(localStorage.getItem('kader'));
+                delete kader[manager];
+                localStorage.setItem('kader', JSON.stringify(kader));
+
+                zeigeGespeichertenKader();
+            }
+        }
+
+        function bestaetigeKader(manager) {
+            let kader = JSON.parse(localStorage.getItem('kader'));
+            kader[manager].letzteAenderung = new Date().toLocaleString(); // Aktualisiere die letzte Änderung
+            localStorage.setItem('kader', JSON.stringify(kader));
+
+            zeigeGespeichertenKader();
         }
 
         // Initialisierung
         zeigeGespeichertenKader();
     </script>
-
 </body>
 </html>
