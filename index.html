@@ -22,9 +22,24 @@
             justify-content: center;
             margin-bottom: 20px;
         }
-        img {
-            width: 150px; /* Logo Größe */
-            margin-bottom: 10px;
+        .table-container {
+            margin: 40px auto;
+            width: 80%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f1f1f1;
         }
         .title {
             font-size: 2.5em;
@@ -34,7 +49,7 @@
         .subtitle {
             font-size: 1.2em;
             color: #555;
-            margin-top: 15px; /* Abstand zum Titel erhöht */
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -44,6 +59,71 @@
         <div class="title">Bundesliga Manager</div>
         <div class="subtitle">Fairness. Spaß. Wettkampf.</div>
     </div>
+
+    <h2>Aktuelle Tabelle</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Platz</th>
+                    <th>Manager</th>
+                    <th>Noten</th>
+                    <th>Tore</th>
+                    <th>Gegentore</th>
+                    <th>11 des Tages</th>
+                    <th>Assists</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Bent</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Leon I.</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Leon B.</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Moritz</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Jonas</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <p>Hier kannst du deine Teams einreichen und die aktuelle Tabelle einsehen!</p>
 </body>
 </html>
