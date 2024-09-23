@@ -7,113 +7,173 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            text-align: center;
-            margin: 0;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
         }
-        h1 {
-            color: #333;
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
         }
-        .logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
+        h1, h2 {
+            text-align: center;
         }
-        .table-container {
-            margin: 40px auto;
-            width: 80%;
+        input[type="text"] {
+            width: calc(25% - 10px);
+            margin: 5px;
+            padding: 5px;
+        }
+        button {
+            display: block;
+            margin: 10px 0;
+        }
+        #gespeicherterKader {
+            margin-top: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
         }
         th, td {
-            padding: 10px;
-            text-align: center;
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
         th {
-            background-color: #f1f1f1;
-        }
-        .title {
-            font-size: 2.5em;
-            color: #333;
-            font-weight: bold;
-        }
-        .subtitle {
-            font-size: 1.2em;
-            color: #555;
-            margin-top: 15px;
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
-    <div class="logo-container">
-        <img src="1.png" alt="Bundesliga Manager Logo">
-        <div class="title">Bundesliga Manager</div>
-        <div class="subtitle">Fairness. Spaß. Wettkampf.</div>
+    <img src="path/to/your/logo.png" alt="Bundesliga Manager Logo" class="logo">
+    <h1>Bundesliga Manager</h1>
+    <h2>Fairness. Spaß. Wettkampf.</h2>
+
+    <input type="text" id="managerName" placeholder="Dein Name" style="width: calc(100% - 10px);">
+
+    <h3>Startelfspiele (11 Spieler)</h3>
+    <div id="startelf">
+        <input type="text" placeholder="Spieler 1">
+        <input type="text" placeholder="Spieler 2">
+        <input type="text" placeholder="Spieler 3">
+        <input type="text" placeholder="Spieler 4">
+        <input type="text" placeholder="Spieler 5">
+        <input type="text" placeholder="Spieler 6">
+        <input type="text" placeholder="Spieler 7">
+        <input type="text" placeholder="Spieler 8">
+        <input type="text" placeholder="Spieler 9">
+        <input type="text" placeholder="Spieler 10">
+        <input type="text" placeholder="Spieler 11">
     </div>
+    <button onclick="speichereKader('startelf')">Speichern</button>
 
-    <div class="kader-entry">
-        <h3>Startelfspieler (11 Spieler)</h3>
-        <form id="starting11">
-            <input type="text" placeholder="Spieler 1" required>
-            <input type="text" placeholder="Spieler 2" required>
-            <input type="text" placeholder="Spieler 3" required>
-            <input type="text" placeholder="Spieler 4" required>
-            <input type="text" placeholder="Spieler 5" required>
-            <input type="text" placeholder="Spieler 6" required>
-            <input type="text" placeholder="Spieler 7" required>
-            <input type="text" placeholder="Spieler 8" required>
-            <input type="text" placeholder="Spieler 9" required>
-            <input type="text" placeholder="Spieler 10" required>
-            <input type="text" placeholder="Spieler 11" required>
-            <button type="submit">Speichern</button>
-            <p class="timestamp" id="timestamp1"></p>
-        </form>
-
-        <h3>Ersatzspieler (8 Spieler)</h3>
-        <form id="substitutes">
-            <input type="text" placeholder="Ersatzspieler 1" required>
-            <input type="text" placeholder="Ersatzspieler 2" required>
-            <input type="text" placeholder="Ersatzspieler 3" required>
-            <input type="text" placeholder="Ersatzspieler 4" required>
-            <input type="text" placeholder="Ersatzspieler 5" required>
-            <input type="text" placeholder="Ersatzspieler 6" required>
-            <input type="text" placeholder="Ersatzspieler 7" required>
-            <input type="text" placeholder="Ersatzspieler 8" required>
-            <button type="submit">Speichern</button>
-            <p class="timestamp" id="timestamp2"></p>
-        </form>
+    <h3>Ersatzspieler (8 Spieler)</h3>
+    <div id="ersatzspieler">
+        <input type="text" placeholder="Ersatzspieler 1">
+        <input type="text" placeholder="Ersatzspieler 2">
+        <input type="text" placeholder="Ersatzspieler 3">
+        <input type="text" placeholder="Ersatzspieler 4">
+        <input type="text" placeholder="Ersatzspieler 5">
+        <input type="text" placeholder="Ersatzspieler 6">
+        <input type="text" placeholder="Ersatzspieler 7">
+        <input type="text" placeholder="Ersatzspieler 8">
     </div>
+    <button onclick="speichereKader('ersatzspieler')">Speichern</button>
 
-    <button onclick="editKader()">Bearbeiten der Kader</button>
+    <button onclick="bearbeiteKader()">Bearbeiten der Kader</button>
+
+    <div id="letzteAenderung"></div>
+    <div id="gespeicherterKader"></div>
 
     <script>
-        document.getElementById('starting11').onsubmit = function(event) {
-            event.preventDefault();
-            const now = new Date();
-            document.getElementById('timestamp1').innerText = `Gespeichert am: ${now.toLocaleString('de-DE')}`;
-            // Hier könnte der Code zum Speichern der Kader hinzugefügt werden
-        };
+        function speichereKader(typ) {
+            const managerName = document.getElementById('managerName').value;
+            if (!managerName) {
+                alert('Bitte gib deinen Namen ein!');
+                return;
+            }
 
-        document.getElementById('substitutes').onsubmit = function(event) {
-            event.preventDefault();
-            const now = new Date();
-            document.getElementById('timestamp2').innerText = `Gespeichert am: ${now.toLocaleString('de-DE')}`;
-            // Hier könnte der Code zum Speichern der Kader hinzugefügt werden
-        };
+            const spieler = Array.from(document.getElementById(typ).getElementsByTagName('input')).map(input => input.value);
+            
+            let kader = JSON.parse(localStorage.getItem('kader')) || {};
+            kader[managerName] = kader[managerName] || {};
+            kader[managerName][typ] = spieler;
 
-        function editKader() {
-            // Funktion zum Bearbeiten der Kader
-            alert("Bearbeitungsmodus aktivieren");
+            localStorage.setItem('kader', JSON.stringify(kader));
+            localStorage.setItem('letzteAenderung', new Date().toLocaleString());
+
+            zeigeGespeichertenKader();
+            zeigeLetzteAenderung();
         }
+
+        function zeigeGespeichertenKader() {
+            const kader = JSON.parse(localStorage.getItem('kader'));
+            let html = '<h3>Gespeicherte Kader</h3>';
+            
+            if (kader) {
+                for (const [manager, data] of Object.entries(kader)) {
+                    html += `<h4>${manager}</h4>`;
+                    html += '<table>';
+                    html += '<tr><th>Position</th><th>Spieler</th></tr>';
+                    
+                    if (data.startelf) {
+                        data.startelf.forEach((spieler, index) => {
+                            html += `<tr><td>Startelf ${index + 1}</td><td>${spieler}</td></tr>`;
+                        });
+                    }
+                    
+                    if (data.ersatzspieler) {
+                        data.ersatzspieler.forEach((spieler, index) => {
+                            html += `<tr><td>Ersatz ${index + 1}</td><td>${spieler}</td></tr>`;
+                        });
+                    }
+                    
+                    html += '</table>';
+                }
+            } else {
+                html += '<p>Noch keine Kader gespeichert.</p>';
+            }
+
+            document.getElementById('gespeicherterKader').innerHTML = html;
+        }
+
+        function zeigeLetzteAenderung() {
+            const letzteAenderung = localStorage.getItem('letzteAenderung');
+            if (letzteAenderung) {
+                document.getElementById('letzteAenderung').textContent = `Letzte Änderung: ${letzteAenderung}`;
+            }
+        }
+
+        function bearbeiteKader() {
+            const managerName = document.getElementById('managerName').value;
+            if (!managerName) {
+                alert('Bitte gib deinen Namen ein, um deinen Kader zu bearbeiten!');
+                return;
+            }
+
+            const kader = JSON.parse(localStorage.getItem('kader'));
+            if (kader && kader[managerName]) {
+                if (kader[managerName].startelf) {
+                    const startelfInputs = document.getElementById('startelf').getElementsByTagName('input');
+                    kader[managerName].startelf.forEach((spieler, index) => {
+                        if (startelfInputs[index]) startelfInputs[index].value = spieler;
+                    });
+                }
+                if (kader[managerName].ersatzspieler) {
+                    const ersatzInputs = document.getElementById('ersatzspieler').getElementsByTagName('input');
+                    kader[managerName].ersatzspieler.forEach((spieler, index) => {
+                        if (ersatzInputs[index]) ersatzInputs[index].value = spieler;
+                    });
+                }
+            } else {
+                alert('Kein gespeicherter Kader für diesen Manager gefunden.');
+            }
+        }
+
+        // Initialisierung
+        zeigeGespeichertenKader();
+        zeigeLetzteAenderung();
     </script>
 </body>
 </html>
