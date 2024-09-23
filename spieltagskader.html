@@ -155,8 +155,8 @@
             <td>
                 <button onclick="bearbeiteEintrag('${manager}', '${type}', ${index})">Bearbeiten</button>
                 <span class="edit-buttons">
-                    <button onclick="speichereAenderung('${manager}', '${type}', ${index})">Speichern</button>
-                    <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})">Abbrechen</button>
+                    <button onclick="speichereAenderung('${manager}', '${type}', ${index})" id="save-${manager}-${type}-${index}" disabled>Speichern</button>
+                    <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})" id="cancel-${manager}-${type}-${index}" disabled>Abbrechen</button>
                 </span>
             </td>
         </tr>
@@ -168,20 +168,16 @@
         }
 
         function bearbeiteEintrag(manager, type, index) {
-            const row = document.getElementById(`${manager}-${type}-${index}`);
-            const spielerCell = row.cells[1];
-            const currentName = spielerCell.textContent;
-            spielerCell.innerHTML = `<input type="text" value="${currentName}">`;
-            row.classList.add('edit-mode');
+    const row = document.getElementById(`${manager}-${type}-${index}`);
+    const spielerCell = row.cells[1];
+    const currentName = spielerCell.textContent;
+    spielerCell.innerHTML = `<input type="text" value="${currentName}">`;
+    row.classList.add('edit-mode');
 
-            // Setze die aktuellen Bearbeitungsvariablen
-            currentEditingManager = manager;
-            currentEditingType = type;
-            currentEditingIndex = index;
-
-            // Aktiviere die Speichern und Abbrechen Buttons
-            updateEditButtons();
-        }
+    // Aktivieren der Speichern und Abbrechen Buttons
+    document.getElementById(`save-${manager}-${type}-${index}`).disabled = false;
+    document.getElementById(`cancel-${manager}-${type}-${index}`).disabled = false;
+}
 
         function updateEditButtons() {
             const buttons = document.querySelectorAll('.edit-buttons button');
@@ -212,13 +208,11 @@
         }
 
         function abbrechenBearbeitung(manager, type, index) {
-            zeigeGespeichertenKader();
-
-            // Setze die Bearbeitungsvariablen zurück
-            currentEditingManager = null;
-            currentEditingType = null;
-            currentEditingIndex = null;
-        }
+    zeigeGespeichertenKader();
+    // Deaktivieren der Speichern und Abbrechen Buttons
+    document.getElementById(`save-${manager}-${type}-${index}`).disabled = true;
+    document.getElementById(`cancel-${manager}-${type}-${index}`).disabled = true;
+}
 
         function loescheEintrag(manager, type, index) {
             if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
