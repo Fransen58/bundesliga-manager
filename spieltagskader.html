@@ -48,22 +48,16 @@
         .edit-mode input {
             width: calc(100% - 22px);
         }
-        .edit-buttons {
-            display: none;
-        }
-        .edit-mode .edit-buttons {
-            display: inline;
-        }
     </style>
 </head>
 <body>
-    <img src="1.png" alt="Bundesliga Manager Logo" alt="Bundesliga Manager Logo" class="logo">
+    <img src="1.png" alt="Bundesliga Manager Logo" class="logo" onclick="window.location.href='index.html'">
     <h1>Bundesliga Manager</h1>
     <h2>Fairness. Spaß. Wettkampf.</h2>
 
     <input type="text" id="managerName" placeholder="Dein Name" style="width: calc(100% - 10px);">
 
-    <h3>Startelfspiele (11 Spieler)</h3>
+    <h3>Startelfspieler (11 Spieler)</h3>
     <div id="startelf">
         <input type="text" placeholder="Spieler 1">
         <input type="text" placeholder="Spieler 2">
@@ -92,7 +86,6 @@
 
     <button onclick="speichereKader()">Speichern</button>
 
-    <div id="letzteAenderung"></div>
     <div id="gespeicherterKader"></div>
 
     <script>
@@ -105,15 +98,14 @@
 
             const startelf = Array.from(document.getElementById('startelf').getElementsByTagName('input')).map(input => input.value);
             const ersatzspieler = Array.from(document.getElementById('ersatzspieler').getElementsByTagName('input')).map(input => input.value);
-            
+            const letzteAenderung = new Date().toLocaleString();
+
             let kader = JSON.parse(localStorage.getItem('kader')) || {};
-            kader[managerName] = { startelf, ersatzspieler };
+            kader[managerName] = { startelf, ersatzspieler, letzteAenderung };
 
             localStorage.setItem('kader', JSON.stringify(kader));
-            localStorage.setItem('letzteAenderung', new Date().toLocaleString());
 
             zeigeGespeichertenKader();
-            zeigeLetzteAenderung();
         }
 
         function zeigeGespeichertenKader() {
@@ -123,6 +115,7 @@
             if (kader && Object.keys(kader).length > 0) {
                 for (const [manager, data] of Object.entries(kader)) {
                     html += `<h4>${manager}</h4>`;
+                    html += `<p>Letzte Änderung: ${data.letzteAenderung}</p>`;
                     html += `<table id="kader-${manager}">`;
                     html += '<tr><th>Position</th><th>Spieler</th><th>Aktionen</th></tr>';
                     
@@ -135,6 +128,7 @@
                     });
                     
                     html += '</table>';
+                    html += `<button onclick="loescheKader('${manager}')">Gesamten Kader Löschen</button>`;
                 }
             } else {
                 html += '<p>Noch keine Kader gespeichert.</p>';
@@ -182,7 +176,6 @@
             row.classList.remove('edit-mode');
 
             zeigeGespeichertenKader();
-            zeigeLetzteAenderung();
         }
 
         function abbrechenBearbeitung(manager, type, index) {
@@ -196,20 +189,21 @@
                 localStorage.setItem('kader', JSON.stringify(kader));
 
                 zeigeGespeichertenKader();
-                zeigeLetzteAenderung();
             }
         }
 
-        function zeigeLetzteAenderung() {
-            const letzteAenderung = localStorage.getItem('letzteAenderung');
-            if (letzteAenderung) {
-                document.getElementById('letzteAenderung').textContent = `Letzte Änderung: ${letzteAenderung}`;
+        function loescheKader(manager) {
+            if (confirm('Möchten Sie den gesamten Kader wirklich löschen?')) {
+                let kader = JSON.parse(localStorage.getItem('kader'));
+                delete kader[manager];
+                localStorage.setItem('kader', JSON.stringify(kader));
+
+                zeigeGespeichertenKader();
             }
         }
 
         // Initialisierung
         zeigeGespeichertenKader();
-        zeigeLetzteAenderung();
     </script>
 </body>
 </html>
