@@ -179,6 +179,16 @@
             currentEditingManager = manager;
             currentEditingType = type;
             currentEditingIndex = index;
+
+            // Aktiviere die Speichern und Abbrechen Buttons
+            updateEditButtons();
+        }
+
+        function updateEditButtons() {
+            const buttons = document.querySelectorAll('.edit-buttons button');
+            buttons.forEach(button => {
+                button.disabled = false; // Alle Buttons aktivieren
+            });
         }
 
         function speichereAenderung(manager, type, index) {
@@ -206,7 +216,6 @@
             zeigeGespeichertenKader();
 
             // Setze die Bearbeitungsvariablen zurück
-
             currentEditingManager = null;
             currentEditingType = null;
             currentEditingIndex = null;
