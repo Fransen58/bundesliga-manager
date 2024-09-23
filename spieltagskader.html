@@ -29,6 +29,10 @@
             margin: 5px;
             padding: 5px 10px;
         }
+        button[disabled] {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
         #gespeicherterKader {
             margin-top: 20px;
         }
@@ -89,6 +93,10 @@
     <div id="gespeicherterKader"></div>
 
     <script>
+        let currentEditingManager = null;
+        let currentEditingType = null;
+        let currentEditingIndex = null;
+
         function speichereKader() {
             const managerName = document.getElementById('managerName').value;
             if (!managerName) {
@@ -129,6 +137,7 @@
                     
                     html += '</table>';
                     html += `<button onclick="loescheKader('${manager}')">Gesamten Kader Löschen</button>`;
+                    html += `<button onclick="bestaetigeKader('${manager}')">Kader Bestätigen</button>`;
                 }
             } else {
                 html += '<p>Noch keine Kader gespeichert.</p>';
@@ -147,12 +156,16 @@
                         <button onclick="bearbeiteEintrag('${manager}', '${type}', ${index})">Bearbeiten</button>
                         <button onclick="loescheEintrag('${manager}', '${type}', ${index})">Löschen</button>
                         <span class="edit-buttons">
-                            <button onclick="speichereAenderung('${manager}', '${type}', ${index})">Speichern</button>
-                            <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})">Abbrechen</button>
+                            <button onclick="speichereAenderung('${manager}', '${type}', ${index})" ${isEditingDisabled()}>Speichern</button>
+                            <button onclick="abbrechenBearbeitung('${manager}', '${type}', ${index})" ${isEditingDisabled()}>Abbrechen</button>
                         </span>
                     </td>
                 </tr>
             `;
+        }
+
+        function isEditingDisabled() {
+            return currentEditingManager === null ? 'disabled' : '';
         }
 
         function bearbeiteEintrag(manager, type, index) {
@@ -161,6 +174,11 @@
             const currentName = spielerCell.textContent;
             spielerCell.innerHTML = `<input type="text" value="${currentName}">`;
             row.classList.add('edit-mode');
+
+            // Setze die aktuellen Bearbeitungsvariablen
+            currentEditingManager = manager;
+            currentEditingType = type;
+            currentEditingIndex = index;
         }
 
         function speichereAenderung(manager, type, index) {
@@ -170,16 +188,28 @@
 
             let kader = JSON.parse(localStorage.getItem('kader'));
             kader[manager][type][index] = newName;
+            kader[manager].letzteAenderung = new Date().toLocaleString(); // Aktualisiere die letzte Änderung
             localStorage.setItem('kader', JSON.stringify(kader));
 
             row.cells[1].textContent = newName;
             row.classList.remove('edit-mode');
+
+            // Setze die Bearbeitungsvariablen zurück
+            currentEditingManager = null;
+            currentEditingType = null;
+            currentEditingIndex = null;
 
             zeigeGespeichertenKader();
         }
 
         function abbrechenBearbeitung(manager, type, index) {
             zeigeGespeichertenKader();
+
+            // Setze die Bearbeitungsvariablen zurück
+
+            currentEditingManager = null;
+            currentEditingType = null;
+            currentEditingIndex = null;
         }
 
         function loescheEintrag(manager, type, index) {
@@ -200,6 +230,14 @@
 
                 zeigeGespeichertenKader();
             }
+        }
+
+        function bestaetigeKader(manager) {
+            let kader = JSON.parse(localStorage.getItem('kader'));
+            kader[manager].letzteAenderung = new Date().toLocaleString(); // Aktualisiere die letzte Änderung
+            localStorage.setItem('kader', JSON.stringify(kader));
+
+            zeigeGespeichertenKader();
         }
 
         // Initialisierung
