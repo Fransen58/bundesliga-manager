@@ -357,35 +357,69 @@
     </div>
 
     <script>
-        function editTable(name) {
-            const table = document.querySelector(`table.kader-table:nth-of-type(${['bent', 'leonI', 'leonB', 'moritz', 'jonas'].indexOf(name) + 1})`);
-            const rows = table.querySelectorAll('td');
-            rows.forEach(row => row.contentEditable = true);
-            toggleButtons(name, false);
+        let originalData = {};
+
+        function editTable(tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr');
+            originalData[tableId] = [];
+
+            rows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('td');
+                originalData[tableId][rowIndex] = [];
+
+                cells.forEach((cell, cellIndex) => {
+                    if (tableId === 'main-table' && (cellIndex === 0 || cellIndex === 1)) {
+                        // Skip editing for Platz and Manager columns in main table
+                        return;
+                    }
+                    originalData[tableId][rowIndex][cellIndex] = cell.textContent;
+                    cell.contentEditable = true;
+                });
+            });
+
+            toggleButtons(tableId, true);
         }
 
-        function saveTable(name) {
-            const table = document.querySelector(`table.kader-table:nth-of-type(${['bent', 'leonI', 'leonB', 'moritz', 'jonas'].indexOf(name) + 1})`);
-            const rows = table.querySelectorAll('td');
-            rows.forEach(row => row.contentEditable = false);
-            toggleButtons(name, true);
-            // Hier könnten Sie zusätzlich die Daten speichern (z.B. in localStorage)
+        function saveTable(tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                cells.forEach(cell => {
+                    cell.contentEditable = false;
+                });
+            });
+
+            toggleButtons(tableId, false);
+            // Here you could add code to save the data (e.g., to localStorage or send to a server)
         }
 
-        function cancelEdit(name) {
-            const table = document.querySelector(`table.kader-table:nth-of-type(${['bent', 'leonI', 'leonB', 'moritz', 'jonas'].indexOf(name) + 1})`);
-            const rows = table.querySelectorAll('td');
-            rows.forEach(row => row.contentEditable = false);
-            toggleButtons(name, true);
-            // Hier könnten Sie zusätzlich den vorherigen Zustand wiederherstellen
+        function cancelEdit(tableId) {
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('td');
+                cells.forEach((cell, cellIndex) => {
+                    if (originalData[tableId][rowIndex] && originalData[tableId][rowIndex][cellIndex]) {
+                        cell.textContent = originalData[tableId][rowIndex][cellIndex];
+                    }
+                    cell.contentEditable = false;
+                });
+            });
+
+            toggleButtons(tableId, false);
         }
 
-        function toggleButtons(name, isEditing) {
-            const buttons = document.querySelectorAll(`.button-container button`);
-            buttons.forEach(button => button.disabled = isEditing);
-            const activeButtons = document.querySelector(`.button-container:nth-of-type(${['bent', 'leonI', 'leonB', 'moritz', 'jonas'].indexOf(name) + 1})`).children;
-            activeButtons[1].disabled = false; // Speichern aktivieren
-            activeButtons[2].disabled = false; // Abbrechen aktivieren
+        function toggleButtons(tableId, isEditing) {
+            const container = document.getElementById(tableId).nextElementSibling;
+            const buttons = container.querySelectorAll('button');
+            
+            buttons[0].disabled = isEditing; // Edit button
+            buttons[1].disabled = !isEditing; // Save button
+            buttons[2].disabled = !isEditing; // Cancel button
         }
     </script>
 
