@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Spieltagskader</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Dein Stylesheet hier einfügen -->
+</head>
+<body>
+    <header>
+        <img src="dein-logo.png" alt="Logo" class="logo">
+        <h1>Die Spieltagskader</h1>
+        <h2>Hier kannst du deine Kader eintragen und speichern</h2>
+    </header>
+
+    <div class="kader-entry">
+        <h3>Startelfspieler (11 Spieler)</h3>
+        <form id="starting11">
+            <input type="text" placeholder="Spieler 1" required>
+            <input type="text" placeholder="Spieler 2" required>
+            <input type="text" placeholder="Spieler 3" required>
+            <input type="text" placeholder="Spieler 4" required>
+            <input type="text" placeholder="Spieler 5" required>
+            <input type="text" placeholder="Spieler 6" required>
+            <input type="text" placeholder="Spieler 7" required>
+            <input type="text" placeholder="Spieler 8" required>
+            <input type="text" placeholder="Spieler 9" required>
+            <input type="text" placeholder="Spieler 10" required>
+            <input type="text" placeholder="Spieler 11" required>
+            <button type="submit">Speichern</button>
+            <p class="timestamp" id="timestamp1"></p>
+        </form>
+
+        <h3>Ersatzspieler (8 Spieler)</h3>
+        <form id="substitutes">
+            <input type="text" placeholder="Ersatzspieler 1" required>
+            <input type="text" placeholder="Ersatzspieler 2" required>
+            <input type="text" placeholder="Ersatzspieler 3" required>
+            <input type="text" placeholder="Ersatzspieler 4" required>
+            <input type="text" placeholder="Ersatzspieler 5" required>
+            <input type="text" placeholder="Ersatzspieler 6" required>
+            <input type="text" placeholder="Ersatzspieler 7" required>
+            <input type="text" placeholder="Ersatzspieler 8" required>
+            <button type="submit">Speichern</button>
+            <p class="timestamp" id="timestamp2"></p>
+        </form>
+    </div>
+
+    <button onclick="editKader()">Bearbeiten der Kader</button>
+
+    <script>
+        document.getElementById('starting11').onsubmit = function(event) {
+            event.preventDefault();
+            const now = new Date();
+            document.getElementById('timestamp1').innerText = `Gespeichert am: ${now.toLocaleString('de-DE')}`;
+            // Hier könnte der Code zum Speichern der Kader hinzugefügt werden
+        };
+
+        document.getElementById('substitutes').onsubmit = function(event) {
+            event.preventDefault();
+            const now = new Date();
+            document.getElementById('timestamp2').innerText = `Gespeichert am: ${now.toLocaleString('de-DE')}`;
+            // Hier könnte der Code zum Speichern der Kader hinzugefügt werden
+        };
+
+        function editKader() {
+            // Funktion zum Bearbeiten der Kader
+            alert("Bearbeitungsmodus aktivieren");
+        }
+    </script>
+</body>
+</html>
