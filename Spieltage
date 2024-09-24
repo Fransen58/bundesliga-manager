@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bundesliga Manager - Spieltage</title>
+    <style>
+        /* Verwenden Sie den gleichen Stil wie auf der Startseite */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #333;
+            font-weight: bold;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.2em;
+            color: #555;
+            margin-top: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f3f3f3;
+        }
+        .edit-mode input {
+            width: calc(100% - 10px);
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+        }
+        button[disabled] {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <img src="Logo Manager.png" alt="Bundesliga Manager Logo" class="logo" onclick="window.location.href='index.html'">
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="spieltagskader.html">Spieltagskader</a></li>
+        </ul>
+    </nav>
+
+    <h1>Bundesliga Manager - Spieltage</h1>
+    <h2>Auswertung der Bundesliga-Spieltage</h2>
+
+    <h3>Spieltag 1</h3>
+    <table id="spieltag1">
+        <tr>
+            <th>Platz</th>
+            <th>Manager</th>
+            <th>Noten</th>
+            <th>Tore</th>
+            <th>Gegentore</th>
+            <th>11 des Tages</th>
+            <th>Assists</th>
+            <th>Gesamt</th>
+        </tr>
+        <tr>
+            <td>1.</td>
+            <td>Moritz</td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>2.</td>
+            <td>Leon I.</td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>3.</td>
+            <td>Bent</td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>4.</td>
+            <td>Leon B.</td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>5.</td>
+            <td>Jonas</td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td><input type="number" value="0"></td>
+            <td>0</td>
+        </tr>
+    </table>
+    <button id="save-spieltag1" onclick="speichereAenderungen('spieltag1')" disabled>Speichern</button>
+    <button id="cancel-spieltag1" onclick="brecheAenderungenAb('spieltag1')" disabled>Abbrechen</button>
+
+    <!-- Fügen Sie weitere Spieltage nach diesem Muster hinzu -->
+    <h3>Spieltag 2</h3>
+    <table id="spieltag2">
+        <!-- Tabelleninhalt für Spieltag 2 -->
+    </table>
+    <button id="save-spieltag2" onclick="speichereAenderungen('spieltag2')" disabled>Speichern</button>
+    <button id="cancel-spieltag2" onclick="brecheAenderungenAb('spieltag2')" disabled>Abbrechen</button>
+
+    <script>
+        let currentEditingTable = null;
+
+        function speichereAenderungen(spieltag) {
+            const table = document.getElementById(spieltag);
+            const rows = table.rows;
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                // Speichern Sie die Änderungen in Ihrer Datenstruktur
+                console.log(`Spieltag ${spieltag}, Platz ${i}: ${cells[1].firstChild.value}, ${cells[2].firstChild.value}, ${cells[3].firstChild.value}, ${cells[4].firstChild.value}, ${cells[5].firstChild.value}`);
+            }
+
+            toggleEditMode(spieltag);
+        }
+
+        function brecheAenderungenAb(spieltag) {
+            toggleEditMode(spieltag);
+            // Laden Sie die gespeicherten Daten für den Spieltag wieder
+        }
+
+        function toggleEditMode(spieltag) {
+            const table = document.getElementById(spieltag);
+            const saveBtn = document.getElementById(`save-${spieltag}`);
+            const cancelBtn = document.getElementById(`cancel-${spieltag}`);
+
+            const isEditing = currentEditingTable === spieltag;
+            currentEditingTable = isEditing ? null : spieltag;
+
+            const rows = table.rows;
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i];
+                cells[2].firstChild.disabled = !isEditing;
+                cells[3].firstChild.disabled = !isEditing;
+                cells[4].firstChild.disabled = !isEditing;
+                cells[5].firstChild.disabled = !isEditing;
+                cells[6].firstChild.disabled = !isEditing;
+            }
+
+            saveBtn.disabled = !isEditing;
+            cancelBtn.disabled = !isEditing;
+        }
+    </script>
+</body>
+</html>
