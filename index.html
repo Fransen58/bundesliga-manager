@@ -146,16 +146,23 @@
             const rows = document.getElementById('bundesligaTable').rows;
             for (let i = 1; i < rows.length; i++) {
                 const cells = rows[i].cells;
-                tableData[i-1].manager = cells[1].firstChild.value;
-                tableData[i-1].noten = parseInt(cells[2].firstChild.value);
-                tableData[i-1].tore = parseInt(cells[3].firstChild.value);
-                tableData[i-1].gegentore = parseInt(cells[4].firstChild.value);
-                tableData[i-1].elf = parseInt(cells[5].firstChild.value);
-                tableData[i-1].assists = parseInt(cells[6].firstChild.value);
-                tableData[i-1].gesamt = parseInt(cells[7].firstChild.value);
+                const formData = new FormData();
+                formData.append('platz', tableData[i-1].platz);
+                formData.append('manager', cells[1].firstChild.value);
+                formData.append('noten', parseInt(cells[2].firstChild.value));
+                formData.append('tore', parseInt(cells[3].firstChild.value));
+                formData.append('gegentore', parseInt(cells[4].firstChild.value));
+                formData.append('elf', parseInt(cells[5].firstChild.value));
+                formData.append('assists', parseInt(cells[6].firstChild.value));
+                formData.append('gesamt', parseInt(cells[7].firstChild.value));
+
+                fetch('save_data.php', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Fehler:', error));
             }
-            localStorage.setItem('bundesligaTableData', JSON.stringify(tableData));
-            toggleEdit();
         }
 
         function cancelEdit() {
